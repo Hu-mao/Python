@@ -1,41 +1,54 @@
-#1----------------------------------
-class Book:
-    def __init__(self, title, author, year):
+from abc import ABC, abstractmethod
+
+
+class Document(ABC):
+    def __init__(self, title, text, ext, pages):
         self.title = title
-        self.author = author
-        self.year = year
+        self.text = text
+        self.extension = ext
+        self.pages = pages
 
-    def is_new(self):
-        return self.year >= 2020
-
-
-book1 = Book("К", "Тарас Сарат", 10)
-book2 = Book("Вітер", "Стейсы Хтось", 2030)
-book3 = Book("Одного разу", "Никита Орлик", 2010)
-
-print(book1.is_new())
-print(book2.is_new())
-print(book3.is_new())
-#2-----------------------------------------
-
-class PositiveNumber:
-    def __new__(cls, value):
-        if not isinstance(value, int) or isinstance(value, bool):
-            raise TypeError("Потрібно ціле число")
-
-        if value < 0:
-            print("Від'ємне число заборонено")
-            return None
-
-        return super().__new__(cls)
-
-    def __init__(self, value):
-        self.value = value
+    @abstractmethod
+    def print_document(self):
+        pass
 
 
-a = PositiveNumber(10)
-b = PositiveNumber(-5)
-с = PositiveNumber(-5.6)
-print(a.value)
-print(b)
-print(с)
+class ExcellDocument(Document):
+    def print_document(self):
+        print(f"Друк Excel-документа: {self.title}.{self.extension}")
+        print(f"Сторінок: {self.pages}")
+        print(self.text)
+
+
+class WordDocument(Document):
+    def print_document(self):
+        print(f"Друк Word-документа: {self.title}.{self.extension}")
+        print(f"Сторінок: {self.pages}")
+        print(self.text)
+
+
+class HtmlDocument(Document):
+    def print_document(self):
+        print(f"Друк HTML-документа: {self.title}.{self.extension}")
+        print(f"Сторінок: {self.pages}")
+        print(self.text)
+
+
+class Printer:
+    def __init__(self, model):
+        self.model = model
+    def print(self, document: Document):
+        print(f"\nПринтер: {self.model}")
+        document.print_document()
+        print("Завершено.")
+
+
+excel = ExcellDocument("Звіт", "Шось звітове", "xlsx", 56)
+word = WordDocument("Реферат", "Шось дуже важливе", "docx", 8)
+html = HtmlDocument("Сторінка", "Шось", "html", 2000)
+
+printer = Printer("SuperPrinter 2000")
+
+printer.print(excel)
+printer.print(word)
+printer.print(html)
