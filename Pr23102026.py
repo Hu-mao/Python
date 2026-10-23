@@ -12,4 +12,3 @@ class User(LoggingMixin):
 
 user = User("Олександр")
 user.login()
-user.log("Перевірка роботи журналу")
