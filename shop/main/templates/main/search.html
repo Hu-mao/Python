@@ -1,0 +1,37 @@
+{% extends 'main/layout.html' %}
+{% load static %}
+
+{% block title %}
+Результат пошуку
+{% endblock %}
+
+{% block text %}
+результат пошуку
+{% endblock %}
+
+{% block content %}
+
+<div class="row g-4">
+
+    <div class="col-md-4">
+        <div class="card shadow-sm h-100">
+
+            <img src="{% static card.image %}"
+                 class="card-img-top"
+                 alt="{{ card.title }}">
+
+            <div class="card-body">
+                <h4 class="card-title">{{ card.title }}</h4>
+                <p class="card-text">{{ card.text }}</p>
+
+                <a href="#" class="btn btn-primary">
+                    {{ card.button }}
+                </a>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
