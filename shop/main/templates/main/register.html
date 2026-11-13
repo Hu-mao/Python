@@ -42,6 +42,15 @@
                     <button type="submit" class="btn btn-primary w-100">
                         Зареєструватися
                     </button>
+
+                    <div class="mb-3">
+                    <label class="form-label">Аватар</label>
+                    <input type="file"
+           name="avatar"
+           class="form-control"
+           accept="image/*">
+                    </div>
+
                 </form>
 
                 <p id="result" class="mt-3 text-center"></p>
@@ -52,45 +61,48 @@
     </div>
 </div>
 
+
 <script>
     document.getElementById('registerForm').addEventListener('submit', async function(e) {
         e.preventDefault();
 
         const form = new FormData(this);
 
-        const data = {
-            name: form.get('name'),
-            email: form.get('email'),
-            phone: form.get('phone')
-        };
-
         const csrfToken = document.querySelector(
             '[name=csrfmiddlewaretoken]'
         ).value;
 
-        const response = await fetch("{% url 'register_data' %}", {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': csrfToken
-            },
-            body: JSON.stringify(data)
-        });
+        try {
+            const response = await fetch("{% url 'register_data' %}", {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrfToken
+                },
+                body: form
+            });
 
-        const result = await response.json();
+            const result = await response.json();
 
-        document.getElementById('result').textContent = result.message;
+            document.getElementById('result').textContent = result.message;
 
-        if (result.success) {
-            document.getElementById('result').className =
-                'mt-3 text-center text-success';
+            if (result.success) {
+                document.getElementById('result').className =
+                    'mt-3 text-center text-success';
 
-            this.reset();
-        } else {
+                this.reset();
+            } else {
+                document.getElementById('result').className =
+                    'mt-3 text-center text-danger';
+            }
+        } catch (error) {
+            document.getElementById('result').textContent =
+                'Помилка сервера';
+
             document.getElementById('result').className =
                 'mt-3 text-center text-danger';
         }
     });
 </script>
+
 
 {% endblock %}

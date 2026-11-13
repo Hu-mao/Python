@@ -2,6 +2,7 @@ import json
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
+from main.user_service import UserService
 
 
 cards = [
@@ -52,25 +53,42 @@ def register(request):
 
 
 @require_POST
+
+@require_POST
 def register_data(request):
     try:
-        data = json.loads(request.body)
+        name = request.POST.get('name', '')
+        email = request.POST.get('email', '')
+        phone = request.POST.get('phone', '')
+        avatar = request.FILES.get('avatar')
 
-        name = data.get('name', '')
-        email = data.get('email', '')
-        phone = data.get('phone', '')
+        if not name or not email or not phone:
+            return JsonResponse({
+                'success': False,
+                'message': 'Заповніть усі обов’язкові поля'
+            }, status=400)
 
-        print("\n===== Нова реєстрація =====")
-        print(json.dumps(data, ensure_ascii=False, indent=4))
-        print("===========================\n")
+        if UserService.get_all_users().filter(email=email).exists():
+            return JsonResponse({
+                'success': False,
+                'message': 'Користувач із таким email вже існує'
+            }, status=400)
+
+        user = UserService.create_user(
+            name=name,
+            email=email,
+            phone=phone,
+            avatar=avatar
+        )
 
         return JsonResponse({
             'success': True,
-            'message': 'Реєстрація успішна!'
+            'message': 'Реєстрація успішна!',
+            'user_id': user.id
         })
 
-    except (json.JSONDecodeError, UnicodeDecodeError):
+    except Exception as e:
         return JsonResponse({
             'success': False,
-            'message': 'Некоректний JSON'
+            'message': str(e)
         }, status=400)
