@@ -14,27 +14,49 @@
     <div class="container">
         <a class="navbar-brand" href="{% url 'home' %}">Мій сайт</a>
 
-        <div class="collapse navbar-collapse">
+        <button class="navbar-toggler" type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#navbarContent">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarContent">
             <ul class="navbar-nav ms-auto">
-    <li class="nav-item">
-        <a class="nav-link" href="{% url 'home' %}">Головна</a>
-    </li>
 
-    <li class="nav-item">
-        <a class="nav-link" href="{% url 'about' %}">Про нас</a>
-    </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'home' %}">
+                        Головна
+                    </a>
+                </li>
 
-    <li class="nav-item">
-        <a class="nav-link" href="{% url 'register' %}">Реєстрація</a>
-    </li>
-</ul>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'about' %}">
+                        Про нас
+                    </a>
+                </li>
 
-            <form action="{% url 'search' %}" method="get" class="d-flex ms-3">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'register' %}">
+                        Реєстрація
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'create_card' %}">
+                        Додати картку
+                    </a>
+                </li>
+
+            </ul>
+
+            <form action="{% url 'search' %}" method="get"
+                  class="d-flex ms-3">
                 <input class="form-control me-2"
                        type="search"
                        name="title"
                        placeholder="Пошук за назвою"
                        required>
+
                 <button class="btn btn-primary" type="submit">
                     Пошук
                 </button>
@@ -63,12 +85,42 @@
         {% for card in cards %}
         <div class="col-md-4">
             <div class="card shadow-sm h-100">
-                <img src="{% static card.image %}" class="card-img-top" alt="{{ card.title }}">
+
+                <img src="{% static card.image %}"
+                     class="card-img-top"
+                     alt="{{ card.title }}">
 
                 <div class="card-body">
                     <h4 class="card-title">{{ card.title }}</h4>
+
                     <p class="card-text">{{ card.text }}</p>
-                    <a href="#" class="btn btn-primary">{{ card.button }}</a>
+
+                    <a href="#" class="btn btn-primary">
+                        {{ card.button }}
+                    </a>
+                </div>
+
+            </div>
+        </div>
+        {% endfor %}
+
+        {% for card in db_cards %}
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+
+                    <h4 class="card-title">{{ card.title }}</h4>
+
+                    <p class="card-text">
+                        {{ card.description }}
+                    </p>
+
+                    {% for tag in card.tags.all %}
+                        <span class="badge bg-secondary">
+                            {{ tag.name }}
+                        </span>
+                    {% endfor %}
+
                 </div>
             </div>
         </div>
@@ -81,7 +133,9 @@
 
 <footer class="bg-dark text-white text-center py-3 mt-5">
     <div class="container">
-        <p class="mb-0">© 2026 Мій сайт. Усі права захищені.</p>
+        <p class="mb-0">
+            © 2026 Мій сайт. Усі права захищені.
+        </p>
     </div>
 </footer>
 

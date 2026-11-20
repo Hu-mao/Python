@@ -1,4 +1,7 @@
 import json
+from django.shortcuts import render, redirect
+from .forms import CardForm
+from .models import Card
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
@@ -28,8 +31,12 @@ cards = [
 
 
 def home(request):
-    return render(request, 'main/index.html', {'cards': cards})
+    db_cards = Card.objects.all().prefetch_related('tags')
 
+    return render(request, 'main/index.html', {
+        'cards': cards,
+        'db_cards': db_cards
+    })
 
 def about(request):
     return render(request, 'main/about.html')
@@ -92,3 +99,16 @@ def register_data(request):
             'success': False,
             'message': str(e)
         }, status=400)
+def create_card(request):
+    if request.method == 'POST':
+        form = CardForm(request.POST)
+
+        if form.is_valid():
+            form.save()
+            return redirect('home')
+    else:
+        form = CardForm()
+
+    return render(request, 'main/create_card.html', {
+        'form': form
+    })
