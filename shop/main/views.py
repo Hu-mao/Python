@@ -30,13 +30,30 @@ cards = [
 ]
 
 
+
 def home(request):
     db_cards = Card.objects.all().prefetch_related('tags')
 
-    return render(request, 'main/index.html', {
+    visits = request.COOKIES.get('visits')
+
+    if visits is None:
+        message = 'Вітаємо! Це ваш перший візит'
+        visits = 1
+    else:
+        visits = int(visits)
+        message = f'Ви вже відвідували сайт {visits} разів.'
+        visits += 1
+
+    response = render(request, 'main/index.html', {
         'cards': cards,
-        'db_cards': db_cards
+        'db_cards': db_cards,
+        'visit_message': message
     })
+
+    response.set_cookie('visits', visits, max_age=60 * 60 * 24 * 365)
+
+    return response
+
 
 def about(request):
     return render(request, 'main/about.html')
